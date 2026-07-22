@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: db-postgres-testBack
+    environment:
+      POSTGRES_DB: trainBack
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d trainBack" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: train-backend
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/trainBack
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: "123"
+      SPRING_LIQUIBASE_URL: jdbc:postgresql://postgres:5432/trainBack
+      SPRING_LIQUIBASE_USER: postgres
+      SPRING_LIQUIBASE_PASSWORD: "123"
+    networks:
+      - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
