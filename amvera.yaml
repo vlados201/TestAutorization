@@ -1,5 +1,5 @@
 meta:
   environment: docker
   toolchain:
-    name: docker-compose
+    name: docker
     version: latest
