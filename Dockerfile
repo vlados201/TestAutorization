@@ -17,4 +17,4 @@ COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8081
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-Dspring.datasource.url=${SPRING_DATASOURCE_URL}", "-Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME}", "-Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD}", "-Dspring.liquibase.url=${SPRING_LIQUIBASE_URL}", "-Dspring.liquibase.user=${SPRING_LIQUIBASE_USER}", "-Dspring.liquibase.password=${SPRING_LIQUIBASE_PASSWORD}", "-jar", "app.jar"]
